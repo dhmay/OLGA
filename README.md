@@ -1,3 +1,9 @@
+# This fork is for OLGA in Python 3
+
+OLGA was written in Python 2. I ran 2to3 and touched up some integer-division issues. Otherwise, I've done nothing.
+
+It runs and gives reasonable-looking output, but I can't vouch that it gives identical output to the original version.
+
 ## Synopsis
 
 OLGA (Optimized Likelihood estimate of immunoGlobulin Amino-acid sequences) is a python 2.7 software developed to compute the generation probability of amino acid and in-frame nucleotide CDR3 sequences from a generative model of V(D)J recombination.
