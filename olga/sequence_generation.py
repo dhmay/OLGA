@@ -59,7 +59,7 @@ Example
 @author: zacharysethna
 """
 import numpy as np
-from utils import nt2aa, calc_steady_state_dist
+from .utils import nt2aa, calc_steady_state_dist
 
 class SequenceGenerationVDJ(object):
     """Class of to generate sequences from a VDJ generative model.

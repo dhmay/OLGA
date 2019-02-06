@@ -40,7 +40,7 @@ GenerationProbabilityV(D)J.
 """
 
 import numpy as np
-from utils import construct_codons_dict, generate_sub_codons_left, generate_sub_codons_right, calc_steady_state_dist
+from .utils import construct_codons_dict, generate_sub_codons_left, generate_sub_codons_right, calc_steady_state_dist
 
 class PreprocessedParameters(object):
     """Class used to preprocess the parameters that both VDJ and VJ models have.
@@ -439,7 +439,7 @@ class PreprocessedParametersVDJ(PreprocessedParameters):
         for V_in, pv in enumerate(generative_model.PV):
             current_PVdelV_nt_pos_vec = np.zeros((4, len(cutV_genomic_CDR3_segs[V_in])))
             current_PVdelV_2nd_nt_pos_per_aa_vec = {}
-            for aa in self.codons_dict.keys():
+            for aa in list(self.codons_dict.keys()):
                 current_PVdelV_2nd_nt_pos_per_aa_vec[aa] = np.zeros((4, len(cutV_genomic_CDR3_segs[V_in])))
             for pos, nt in enumerate(cutV_genomic_CDR3_segs[V_in]):
                 if len(cutV_genomic_CDR3_segs[V_in]) - pos >  num_del_pos:
@@ -449,7 +449,7 @@ class PreprocessedParametersVDJ(PreprocessedParameters):
                 elif pos%3 == 1: #Mid codon position
                     for ins_nt in 'ACGT':
                         #We need to find what possible codons are allowed for any aa (or motif)
-                        for aa in self.codons_dict.keys():
+                        for aa in list(self.codons_dict.keys()):
                             if cutV_genomic_CDR3_segs[V_in][pos-1:pos+1]+ ins_nt in self.codons_dict[aa]:
                                 current_PVdelV_2nd_nt_pos_per_aa_vec[aa][nt2num[ins_nt], pos] = pv*generative_model.PdelV_given_V[len(cutV_genomic_CDR3_segs[V_in])-pos-1, V_in]            
                 elif pos%3 == 2: #End of codon
@@ -487,13 +487,13 @@ class PreprocessedParametersVDJ(PreprocessedParameters):
            
             current_PD_nt_pos_vec = np.zeros((4, len(cutD_genomic_CDR3_segs[D_in])))
             current_PD_2nd_nt_pos_per_aa_vec = {}
-            for aa in self.codons_dict.keys():
+            for aa in list(self.codons_dict.keys()):
                 current_PD_2nd_nt_pos_per_aa_vec[aa] = np.zeros((4, len(cutD_genomic_CDR3_segs[D_in])))
             
             for pos, nt in enumerate(cutD_genomic_CDR3_segs[D_in]):
                 current_PD_nt_pos_vec[nt2num[nt], pos] = 1
                 for ins_nt in 'ACGT':
-                    for aa in self.codons_dict.keys():
+                    for aa in list(self.codons_dict.keys()):
                         if ins_nt + cutD_genomic_CDR3_segs[D_in][pos:pos+2] in self.codons_dict[aa]:
                             current_PD_2nd_nt_pos_per_aa_vec[aa][nt2num[ins_nt], pos] = 1
                             
@@ -568,7 +568,7 @@ class PreprocessedParametersVDJ(PreprocessedParameters):
             #We include the marginal PJ here
             current_PJdelJ_nt_pos_vec = np.zeros((4, len(cutJ_genomic_CDR3_segs[J_in])))
             current_PJdelJ_2nd_nt_pos_per_aa_vec  = {}
-            for aa in self.codons_dict.keys():
+            for aa in list(self.codons_dict.keys()):
                 current_PJdelJ_2nd_nt_pos_per_aa_vec[aa] = np.zeros((4, len(cutJ_genomic_CDR3_segs[J_in])))
     
             for pos, nt in enumerate(cutJ_genomic_CDR3_segs[J_in]):
@@ -579,7 +579,7 @@ class PreprocessedParametersVDJ(PreprocessedParameters):
                 elif (len(cutJ_genomic_CDR3_segs[J_in]) - pos)%3 == 2: #Mid codon position
                     for ins_nt in 'ACGT':
                         #We need to find what possible codons are allowed for any aa (or motif)
-                        for aa in self.codons_dict.keys():
+                        for aa in list(self.codons_dict.keys()):
                             if ins_nt + cutJ_genomic_CDR3_segs[J_in][pos:pos+2] in self.codons_dict[aa]:
                                 current_PJdelJ_2nd_nt_pos_per_aa_vec[aa][nt2num[ins_nt], pos] = pj*generative_model.PdelJ_given_J[pos, J_in]
                                 
@@ -602,7 +602,7 @@ class PreprocessedParametersVDJ(PreprocessedParameters):
         
         #Compute Tvd
         Tvd = {}
-        for aa in self.codons_dict.keys():
+        for aa in list(self.codons_dict.keys()):
             current_Tvd = np.zeros((4, 4))
             for init_nt in 'ACGT':
                 for codon in self.codons_dict[aa]:
@@ -611,7 +611,7 @@ class PreprocessedParametersVDJ(PreprocessedParameters):
             
         #Compute Svd
         Svd = {}
-        for aa in self.codons_dict.keys():
+        for aa in list(self.codons_dict.keys()):
             current_Svd = np.zeros((4, 4))
             for ins_nt in 'ACGT':
                 if any([codon.startswith(ins_nt) for codon in self.codons_dict[aa]]):
@@ -621,7 +621,7 @@ class PreprocessedParametersVDJ(PreprocessedParameters):
         
         #Compute Dvd                
         Dvd = {}
-        for aa in self.codons_dict.keys():
+        for aa in list(self.codons_dict.keys()):
             current_Dvd = np.zeros((4, 4))
             for init_nt in 'ACGT':
                 for codon in self.codons_dict[aa]:
@@ -631,7 +631,7 @@ class PreprocessedParametersVDJ(PreprocessedParameters):
 
         #Compute lTvd
         lTvd = {}
-        for aa in self.codons_dict.keys():
+        for aa in list(self.codons_dict.keys()):
             current_lTvd = np.zeros((4, 4))
             for codon in self.codons_dict[aa]:
                 current_lTvd[nt2num[codon[2]], nt2num[codon[0]]] += self.Rvd[nt2num[codon[2]],nt2num[codon[1]]]*self.first_nt_bias_insVD[nt2num[codon[1]]]
@@ -640,7 +640,7 @@ class PreprocessedParametersVDJ(PreprocessedParameters):
         
         #Compute lDvd
         lDvd = {}
-        for aa in self.codons_dict.keys():
+        for aa in list(self.codons_dict.keys()):
             current_lDvd = np.zeros((4, 4))
             for codon in self.codons_dict[aa]:
                 current_lDvd[nt2num[codon[2]], nt2num[codon[0]]] += self.first_nt_bias_insVD[nt2num[codon[1]]]
@@ -664,7 +664,7 @@ class PreprocessedParametersVDJ(PreprocessedParameters):
 
         #Compute Tdj    
         Tdj = {}
-        for aa in self.codons_dict.keys():
+        for aa in list(self.codons_dict.keys()):
             current_Tdj = np.zeros((4, 4))
             for init_nt in 'ACGT':
                 for codon in self.codons_dict[aa]:
@@ -673,7 +673,7 @@ class PreprocessedParametersVDJ(PreprocessedParameters):
         
         #Compute Sdj
         Sdj = {}
-        for aa in self.codons_dict.keys():
+        for aa in list(self.codons_dict.keys()):
             current_Sdj = np.zeros((4, 4))
             for ins_nt in 'ACGT':
                 if any([codon.endswith(ins_nt) for codon in self.codons_dict[aa]]):
@@ -682,7 +682,7 @@ class PreprocessedParametersVDJ(PreprocessedParameters):
         
         #Compute Ddj
         Ddj = {}
-        for aa in self.codons_dict.keys():
+        for aa in list(self.codons_dict.keys()):
             current_Ddj = np.zeros((4, 4))
             for init_nt in 'ACGT':
                 for codon in self.codons_dict[aa]:
@@ -691,7 +691,7 @@ class PreprocessedParametersVDJ(PreprocessedParameters):
         
         #Compute rTdj
         rTdj = {}
-        for aa in self.codons_dict.keys():
+        for aa in list(self.codons_dict.keys()):
             current_lTdj = np.zeros((4, 4))
             for codon in self.codons_dict[aa]:
                 current_lTdj[nt2num[codon[0]], nt2num[codon[2]]] += self.Rdj[nt2num[codon[0]],nt2num[codon[1]]]*self.first_nt_bias_insDJ[nt2num[codon[1]]]
@@ -699,7 +699,7 @@ class PreprocessedParametersVDJ(PreprocessedParameters):
         
         #Compute rDdj
         rDdj = {}
-        for aa in self.codons_dict.keys():
+        for aa in list(self.codons_dict.keys()):
             current_rDdj = np.zeros((4, 4))
             for codon in self.codons_dict[aa]:
                 current_rDdj[nt2num[codon[0]], nt2num[codon[2]]] += self.first_nt_bias_insDJ[nt2num[codon[1]]]
@@ -881,7 +881,7 @@ class PreprocessedParametersVJ(PreprocessedParameters):
         for V_in in range(num_V_genes):
             current_PVdelV_nt_pos_vec = np.zeros((4, len(cutV_genomic_CDR3_segs[V_in])))
             current_PVdelV_2nd_nt_pos_per_aa_vec = {}
-            for aa in self.codons_dict.keys():
+            for aa in list(self.codons_dict.keys()):
                 current_PVdelV_2nd_nt_pos_per_aa_vec[aa] = np.zeros((4, len(cutV_genomic_CDR3_segs[V_in])))
             for pos, nt in enumerate(cutV_genomic_CDR3_segs[V_in]):
                 if len(cutV_genomic_CDR3_segs[V_in]) - pos >  num_del_pos:
@@ -891,7 +891,7 @@ class PreprocessedParametersVJ(PreprocessedParameters):
                 elif pos%3 == 1: #Mid codon position
                     for ins_nt in 'ACGT':
                         #We need to find what possible codons are allowed for any aa (or motif)
-                        for aa in self.codons_dict.keys():
+                        for aa in list(self.codons_dict.keys()):
                             if cutV_genomic_CDR3_segs[V_in][pos-1:pos+1]+ ins_nt in self.codons_dict[aa]:
                                 current_PVdelV_2nd_nt_pos_per_aa_vec[aa][nt2num[ins_nt], pos] = generative_model.PdelV_given_V[len(cutV_genomic_CDR3_segs[V_in])-pos-1, V_in]            
                 elif pos%3 == 2: #End of codon
@@ -929,7 +929,7 @@ class PreprocessedParametersVJ(PreprocessedParameters):
         for J_in in range(num_J_genes):
             current_PJdelJ_nt_pos_vec = np.zeros((4, len(cutJ_genomic_CDR3_segs[J_in])))
             current_PJdelJ_2nd_nt_pos_per_aa_vec  = {}
-            for aa in self.codons_dict.keys():
+            for aa in list(self.codons_dict.keys()):
                 current_PJdelJ_2nd_nt_pos_per_aa_vec[aa] = np.zeros((4, len(cutJ_genomic_CDR3_segs[J_in])))
     
             for pos, nt in enumerate(cutJ_genomic_CDR3_segs[J_in]):
@@ -940,7 +940,7 @@ class PreprocessedParametersVJ(PreprocessedParameters):
                 elif (len(cutJ_genomic_CDR3_segs[J_in]) - pos)%3 == 2: #Mid codon position
                     for ins_nt in 'ACGT':
                         #We need to find what possible codons are allowed for any aa (or motif)
-                        for aa in self.codons_dict.keys():
+                        for aa in list(self.codons_dict.keys()):
                             if ins_nt + cutJ_genomic_CDR3_segs[J_in][pos:pos+2] in self.codons_dict[aa]:
                                 current_PJdelJ_2nd_nt_pos_per_aa_vec[aa][nt2num[ins_nt], pos] = generative_model.PdelJ_given_J[pos, J_in]
                                 
@@ -964,7 +964,7 @@ class PreprocessedParametersVJ(PreprocessedParameters):
         
         #Compute Tvj
         Tvj = {}
-        for aa in self.codons_dict.keys():
+        for aa in list(self.codons_dict.keys()):
             current_Tvj = np.zeros((4, 4))
             for init_nt in 'ACGT':
                 for codon in self.codons_dict[aa]:
@@ -973,7 +973,7 @@ class PreprocessedParametersVJ(PreprocessedParameters):
     
         #Compute Svj
         Svj = {}
-        for aa in self.codons_dict.keys():
+        for aa in list(self.codons_dict.keys()):
             current_Svj = np.zeros((4, 4))
             for ins_nt in 'ACGT':
                 if any([codon.startswith(ins_nt) for codon in self.codons_dict[aa]]):
@@ -982,7 +982,7 @@ class PreprocessedParametersVJ(PreprocessedParameters):
         
         #Compute Dvj               
         Dvj = {}    
-        for aa in self.codons_dict.keys():
+        for aa in list(self.codons_dict.keys()):
             current_Dvj = np.zeros((4, 4))
             for init_nt in 'ACGT':
                 for codon in self.codons_dict[aa]:
@@ -991,7 +991,7 @@ class PreprocessedParametersVJ(PreprocessedParameters):
 
         #Compute lTvj
         lTvj = {}
-        for aa in self.codons_dict.keys():
+        for aa in list(self.codons_dict.keys()):
             current_lTvj = np.zeros((4, 4))
             for codon in self.codons_dict[aa]:
                 current_lTvj[nt2num[codon[2]], nt2num[codon[0]]] += self.Rvj[nt2num[codon[2]],nt2num[codon[1]]]*self.first_nt_bias_insVJ[nt2num[codon[1]]]
@@ -999,7 +999,7 @@ class PreprocessedParametersVJ(PreprocessedParameters):
 
         #Compute lDvj        
         lDvj = {}    
-        for aa in self.codons_dict.keys():
+        for aa in list(self.codons_dict.keys()):
             current_lDvj = np.zeros((4, 4))
             for codon in self.codons_dict[aa]:
                 current_lDvj[nt2num[codon[2]], nt2num[codon[0]]] += self.first_nt_bias_insVJ[nt2num[codon[1]]]

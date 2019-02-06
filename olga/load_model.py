@@ -82,7 +82,7 @@ are adapted from Quentin Marcou (author of IGoR).
 
 """
 import numpy as np
-from utils import cutR_seq, cutL_seq
+from .utils import cutR_seq, cutL_seq
 
 #%% GenomicData class definitions
 class GenomicData(object):
@@ -532,9 +532,9 @@ def read_igor_V_gene_parameters(params_file_name):
                 break
     params_file.close()
     
-    genV = [[]]*len(V_gene_info.keys())
+    genV = [[]]*len(list(V_gene_info.keys()))
     
-    for V_gene in V_gene_info.keys():
+    for V_gene in list(V_gene_info.keys()):
         genV[V_gene_info[V_gene][1]] = [V_gene, '', V_gene_info[V_gene][0]]
 
     return genV
@@ -572,9 +572,9 @@ def read_igor_D_gene_parameters(params_file_name):
                 break
     params_file.close()
     
-    genD = [[]]*len(D_gene_info.keys())
+    genD = [[]]*len(list(D_gene_info.keys()))
     
-    for D_gene in D_gene_info.keys():
+    for D_gene in list(D_gene_info.keys()):
         genD[D_gene_info[D_gene][1]] = [D_gene, D_gene_info[D_gene][0]]
 
     return genD
@@ -615,9 +615,9 @@ def read_igor_J_gene_parameters(params_file_name):
                 break
     params_file.close()
     
-    genJ = [[]]*len(J_gene_info.keys())
+    genJ = [[]]*len(list(J_gene_info.keys()))
     
-    for J_gene in J_gene_info.keys():
+    for J_gene in list(J_gene_info.keys()):
         genJ[J_gene_info[J_gene][1]] = [J_gene, '', J_gene_info[J_gene][0]]
 
     return genJ
@@ -721,7 +721,7 @@ class GenerativeModelVDJ(object):
                     PVDJ[v_in, :, j_in] = PVJ[v_in, j_in]*raw_model[0]['d_gene'][v_in, j_in, :]
             self.PDJ = np.sum(PVDJ, 0)
         else:
-            print 'Unrecognized model structure -- need to construct P(D, J)'
+            print('Unrecognized model structure -- need to construct P(D, J)')
             return 0
         
         self.PdelDldelDr_given_D = np.transpose(np.multiply(np.transpose(raw_model[0]['d_3_del'], (2, 0, 1)), raw_model[0]['d_5_del']), (2, 0 , 1))
@@ -884,7 +884,7 @@ def read_igor_marginals_txt(marginals_file_name , dim_names=False):
                 #Add last dimension and get rid of the closing bracket 
                 marginals_values.append(float(strip_line[previous_coma_index+1:]))
                 if len(marginals_values)!=dimensions[-1]:
-                    print "problem"
+                    print("problem")
                 element_marginal_array[tuple(indices_array)] = marginals_values
         model_dict[element_name] = element_marginal_array				
         

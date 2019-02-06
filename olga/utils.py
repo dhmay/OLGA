@@ -231,27 +231,27 @@ def construct_codons_dict(alphabet_file = None):
         alphabet_f.close()
     
     
-    for symbol in expanded_alphabet.keys():
+    for symbol in list(expanded_alphabet.keys()):
         #Double check that the symbol isn't already used (important particularly for the single codon representation)
-        if symbol in codons_dict.keys():
-            print symbol + " is already used as an 'amino acid' symbol for codons: "
-            print codons_dict[symbol]
+        if symbol in list(codons_dict.keys()):
+            print(symbol + " is already used as an 'amino acid' symbol for codons: ")
+            print(codons_dict[symbol])
             continue
         elif not len(symbol) == 1: #Check that the custom symbol is a single character
-            print "Can't use " + symbol + " as a custom 'amino acid' definitions as such symbols must be single characters."
+            print("Can't use " + symbol + " as a custom 'amino acid' definitions as such symbols must be single characters.")
             continue
         elif symbol in protected_symbols: #This elif shouldn't trigger due to the stripping of protected symbols.
-            print symbol + " is a protected character"
+            print(symbol + " is a protected character")
         current_codon_collection = set()
         for x in expanded_alphabet[symbol]:
-            if x in codons_dict.keys(): #Check if reference to an amino acid or other amino acid symbol
+            if x in list(codons_dict.keys()): #Check if reference to an amino acid or other amino acid symbol
                 current_codon_collection = current_codon_collection.union(codons_dict[x]) #If so, add those codons to the new collection
             elif x.upper() in codons: #Check if specifying a single codon
                 current_codon_collection.add(x.upper()) #If so, add the codon to the new collection
             elif len(x) == 0: #fully stripped away
                 continue
             else: #If not, don't recognize the addition and continue.
-                print 'Unfamiliar amino acid symbol or codon: ' + x
+                print('Unfamiliar amino acid symbol or codon: ' + x)
                 continue
         codons_dict[symbol] = list(current_codon_collection)
     
@@ -275,7 +275,7 @@ def generate_sub_codons_left(codons_dict):
         
     """
     sub_codons_left = {}
-    for aa in codons_dict.keys():
+    for aa in list(codons_dict.keys()):
         sub_codons_left[aa] = list(set([x[0] for x in codons_dict[aa]] + [x[:2] for x in codons_dict[aa]]))
         
     return sub_codons_left
@@ -297,7 +297,7 @@ def generate_sub_codons_right(codons_dict):
         
     """
     sub_codons_right = {}
-    for aa in codons_dict.keys():
+    for aa in list(codons_dict.keys()):
         sub_codons_right[aa] = list(set([x[-1] for x in codons_dict[aa]] + [x[-2:] for x in codons_dict[aa]]))
         
     return sub_codons_right        
